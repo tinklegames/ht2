@@ -1,39 +1,688 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="robots" content="noindex,follow">
-<title>Игра Хоррор Тейл 2: Саманта | Horror Tale 2 - 8Games.net</title>
-<script src="/lib/ysdk/v2.js"></script>
-<script type="text/javascript" src="InitYandexSDK.js"></script>
-<script type="text/javascript" src="InitUnity.js"></script>
-<link rel="stylesheet" href="/lib/game-loader/gameloader2020.css" />
-<script src="/lib/game-loader/gameloader2020.js"></script>
-<meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-</head>
-<body>
-<script type="text/javascript">
-	var options = {
-		author: "Vseigru",
-		logo: "logo.jpg",
-		gameName: "Игра Хоррор Тейл 2: Саманта | Horror Tale 2",
-		gameNameEu: "Horror Tale 2: Samantha",
-		gameUrl: "/igry-horror/38619-igra-khorror-tejl-2-samanta-horror-tale-2.html",
-		moreLink: ("https://8games.net"),
-		allowFullscreen: true,
-		locale: "ru_RU",
-		loader: "unity2020",
-		loaderOptions: {
-			unityLoaderUrl: "Build/HT2_web.loader.js",
-			unityConfigOptions: {
-				dataUrl: "Build/HT2_web.data.unityweb",
-				frameworkUrl: "Build/HT2_web.framework.js.unityweb",
-			    codeUrl: "Build/HT2_web.wasm.unityweb",
-				streamingAssetsUrl: "StreamingAssets"
-			}
-		},
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Horror Tale</title>
+    <link rel="stylesheet" href="TemplateData/style.css" />
+
+    <!-- Stub out Yandex SDK / platform so the game doesn't crash -->
+    <script>
+      (function () {
+        const global = window;
+
+        const sdk = global.sdk || {};
+        const ysdk = global.ysdk || sdk;
+
+        const deviceInfo =
+          sdk.deviceInfo ||
+          ysdk.deviceInfo || {
+            type: "desktop",
+            isMobile: function () {
+              return false;
+            },
+            isTablet: function () {
+              return false;
+            },
+            isDesktop: function () {
+              return true;
+            },
+            isTV: function () {
+              return false;
+            },
+          };
+
+        deviceInfo.type = deviceInfo.type || "desktop";
+        deviceInfo.isMobile =
+          deviceInfo.isMobile ||
+          function () {
+            return false;
+          };
+        deviceInfo.isTablet =
+          deviceInfo.isTablet ||
+          function () {
+            return false;
+          };
+        deviceInfo.isDesktop =
+          deviceInfo.isDesktop ||
+          function () {
+            return true;
+          };
+        deviceInfo.isTV =
+          deviceInfo.isTV ||
+          function () {
+            return false;
+          };
+
+        const environment =
+          sdk.environment ||
+          ysdk.environment || {
+            i18n: {
+              lang: "en",
+              tld: "com",
+            },
+            browser: {
+              lang: navigator.language || "en-US",
+            },
+            app: {
+              id: "stub-app-id",
+            },
+          };
+
+        const feedback = sdk.feedback || ysdk.feedback || {};
+
+        feedback.canReview =
+          feedback.canReview ||
+          function () {
+            console.log("[stub] sdk.feedback.canReview called – disabled.");
+            return Promise.resolve({
+              value: false,
+              reason: "disabled",
+            });
+          };
+
+        feedback.requestReview =
+          feedback.requestReview ||
+          function () {
+            console.log(
+              "[stub] sdk.feedback.requestReview called – pretending no review."
+            );
+            return Promise.resolve({
+              feedbackSent: false,
+            });
+          };
+
+        sdk.canReview =
+          sdk.canReview ||
+          function () {
+            console.log("[stub] sdk.canReview called – disabled.");
+            return Promise.resolve({
+              value: false,
+              reason: "disabled",
+            });
+          };
+
+        sdk.rateUs =
+          sdk.rateUs ||
+          function () {
+            console.log("[stub] sdk.rateUs called – no-op.");
+            return Promise.resolve({
+              feedbackSent: false,
+            });
+          };
+
+        const adv = sdk.adv || ysdk.adv || {};
+
+        adv.showFullscreenAdv =
+          adv.showFullscreenAdv ||
+          function (options) {
+            console.log("[stub] sdk.adv.showFullscreenAdv called", options);
+            const cbs = options && options.callbacks ? options.callbacks : {};
+            try {
+              cbs.onOpen && cbs.onOpen();
+            } catch (e) {
+              console.warn("[stub] onOpen callback error", e);
+            }
+            try {
+              cbs.onClose && cbs.onClose(false);
+            } catch (e) {
+              console.warn("[stub] onClose callback error", e);
+            }
+            return Promise.resolve();
+          };
+
+        adv.showRewardedVideo =
+          adv.showRewardedVideo ||
+          function (options) {
+            console.log("[stub] sdk.adv.showRewardedVideo called", options);
+            const cbs = options && options.callbacks ? options.callbacks : {};
+            try {
+              cbs.onOpen && cbs.onOpen();
+            } catch (e) {
+              console.warn("[stub] rewarded onOpen callback error", e);
+            }
+            try {
+              cbs.onClose && cbs.onClose(false);
+            } catch (e) {
+              console.warn("[stub] rewarded onClose callback error", e);
+            }
+            return Promise.resolve();
+          };
+
+        const auth = sdk.auth || ysdk.auth || {};
+
+        auth.openAuthDialog =
+          auth.openAuthDialog ||
+          function () {
+            console.log(
+              "[stub] ysdk.auth.openAuthDialog called – pretending user cancelled."
+            );
+            return Promise.reject({ code: "AUTH_CANCEL" });
+          };
+
+        let player = global.player || {
+          getMode: function () {
+            return "lite";
+          },
+          getUniqueID: function () {
+            console.log("[stub] player.getUniqueID called");
+            return Promise.resolve("stub-uid");
+          },
+          getName: function () {
+            console.log("[stub] player.getName called");
+            return Promise.resolve("Guest");
+          },
+          getPhoto: function () {
+            console.log("[stub] player.getPhoto called");
+            return Promise.resolve(null);
+          },
+          getPayingStatus: function () {
+            console.log("[stub] player.getPayingStatus called");
+            return Promise.resolve("unknown");
+          },
+          getSignature: function () {
+            console.log("[stub] player.getSignature called");
+            return Promise.resolve("stub-signature");
+          },
+        };
+
+        global.player = player;
+
+        sdk.getPlayer =
+          sdk.getPlayer ||
+          function () {
+            console.log("[stub] sdk.getPlayer called");
+            return Promise.resolve(player);
+          };
+
+        sdk.deviceInfo = deviceInfo;
+        sdk.environment = environment;
+        sdk.feedback = feedback;
+        sdk.adv = adv;
+        sdk.auth = auth;
+
+        global.sdk = sdk;
+
+        if (!global.ysdk) {
+          global.ysdk = sdk;
+        } else {
+          global.ysdk.deviceInfo = global.ysdk.deviceInfo || deviceInfo;
+          global.ysdk.environment = global.ysdk.environment || environment;
+          global.ysdk.feedback = global.ysdk.feedback || feedback;
+          global.ysdk.adv = global.ysdk.adv || adv;
+          global.ysdk.auth = global.ysdk.auth || auth;
+          global.ysdk.getPlayer = global.ysdk.getPlayer || sdk.getPlayer;
+        }
+      })();
+    </script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+
+      #unity-container {
+        width: 100%;
+        height: 100%;
+      }
+
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        background: #000;
+      }
+
+      #unity-loading-bar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #fff;
+        font-family: sans-serif;
+      }
+
+      #unity-progress-bar-empty {
+        width: 200px;
+        height: 20px;
+        border: 1px solid #fff;
+        margin-top: 10px;
+        box-sizing: border-box;
+      }
+
+      #unity-progress-bar-full {
+        width: 0%;
+        height: 100%;
+        background: #fff;
+      }
+
+      #loading-text {
+        margin-top: 8px;
+        font-size: 14px;
+        letter-spacing: 1px;
+      }
+    </style>
+
+    <!-- Intro styles -->
+    <style>
+      #intro-screen {
+        position: fixed;
+        inset: 0;
+        background-color: #414141;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.7s ease, visibility 0.7s ease;
+      }
+
+      #intro-screen.hidden-intro {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #intro-logo-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: fadeIn 1s ease-out forwards;
+      }
+
+      #intro-title {
+        font-family: "Orbitron", system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, #d3a410, #b7870f, #ffe4a1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 8px rgba(211, 165, 16, 0.4));
+        opacity: 0;
+        animation: titleFade 1s ease forwards 0.4s;
+        text-align: center;
+      }
+
+      @keyframes titleFade {
+        from {
+          opacity: 0;
+          transform: translateY(-12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          translate: 0px 36px;
+        }
+        50% {
+          translate: 0px 46px;
+        }
+      }
+      @keyframes bounce2 {
+        0%,
+        100% {
+          translate: 0px 46px;
+        }
+        50% {
+          translate: 0px 56px;
+        }
+      }
+      @keyframes umbral {
+        0% {
+          stop-color: #d3a5102e;
+        }
+        50% {
+          stop-color: rgba(211, 165, 16, 0.519);
+        }
+        100% {
+          stop-color: #d3a5102e;
+        }
+      }
+      @keyframes particles {
+        0%,
+        100% {
+          translate: 0px 16px;
+        }
+        50% {
+          translate: 0px 6px;
+        }
+      }
+
+      #particles {
+        animation: particles 4s ease-in-out infinite;
+      }
+      #animatedStop {
+        animation: umbral 4s infinite;
+      }
+      #bounce {
+        animation: bounce 4s ease-in-out infinite;
+        translate: 0px 36px;
+      }
+      #bounce2 {
+        animation: bounce2 4s ease-in-out infinite;
+        translate: 0px 46px;
+        animation-delay: 0.5s;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Intro overlay -->
+    <div id="intro-screen">
+      <div id="intro-logo-wrapper">
+        <div id="intro-title">Tinkle Games</div>
+
+        <svg xmlns="http://www.w3.org/2000/svg" height="200" width="200">
+          <g style="order: -1;">
+            <polygon
+              transform="rotate(45 100 100)"
+              stroke-width="1"
+              stroke="#d3a410"
+              fill="none"
+              points="70,70 148,50 130,130 50,150"
+              id="bounce"
+            ></polygon>
+            <polygon
+              transform="rotate(45 100 100)"
+              stroke-width="1"
+              stroke="#d3a410"
+              fill="none"
+              points="70,70 148,50 130,130 50,150"
+              id="bounce2"
+            ></polygon>
+            <polygon
+              transform="rotate(45 100 100)"
+              stroke-width="2"
+              stroke=""
+              fill="#414750"
+              points="70,70 150,50 130,130 50,150"
+            ></polygon>
+            <polygon
+              stroke-width="2"
+              stroke=""
+              fill="url(#gradiente)"
+              points="100,70 150,100 100,130 50,100"
+            ></polygon>
+            <defs>
+              <linearGradient
+                y2="100%"
+                x2="10%"
+                y1="0%"
+                x1="0%"
+                id="gradiente"
+              >
+                <stop
+                  style="stop-color: #1e2026;stop-opacity:1"
+                  offset="20%"
+                ></stop>
+                <stop
+                  style="stop-color:#414750;stop-opacity:1"
+                  offset="60%"
+                ></stop>
+              </linearGradient>
+            </defs>
+            <polygon
+              transform="translate(20, 31)"
+              stroke-width="2"
+              stroke=""
+              fill="#b7870f"
+              points="80,50 80,75 80,99 40,75"
+            ></polygon>
+            <polygon
+              transform="translate(20, 31)"
+              stroke-width="2"
+              stroke=""
+              fill="url(#gradiente2)"
+              points="40,-40 80,-40 80,99 40,75"
+            ></polygon>
+            <defs>
+              <linearGradient
+                y2="100%"
+                x2="0%"
+                y1="-17%"
+                x1="10%"
+                id="gradiente2"
+              >
+                <stop
+                  style="stop-color: #d3a51000;stop-opacity:1"
+                  offset="20%"
+                ></stop>
+                <stop
+                  style="stop-color:#d3a51054;stop-opacity:1"
+                  offset="100%"
+                  id="animatedStop"
+                ></stop>
+              </linearGradient>
+            </defs>
+            <polygon
+              transform="rotate(180 100 100) translate(20, 20)"
+              stroke-width="2"
+              stroke=""
+              fill="#d3a410"
+              points="80,50 80,75 80,99 40,75"
+            ></polygon>
+            <polygon
+              transform="rotate(0 100 100) translate(60, 20)"
+              stroke-width="2"
+              stroke=""
+              fill="url(#gradiente3)"
+              points="40,-40 80,-40 80,85 40,110.2"
+            ></polygon>
+            <defs>
+              <linearGradient
+                y2="100%"
+                x2="10%"
+                y1="0%"
+                x1="0%"
+                id="gradiente3"
+              >
+                <stop
+                  style="stop-color: #d3a51000;stop-opacity:1"
+                  offset="20%"
+                ></stop>
+                <stop
+                  style="stop-color:#d3a51054;stop-opacity:1"
+                  offset="100%"
+                ></stop>
+              </linearGradient>
+            </defs>
+            <polygon
+              transform="rotate(45 100 100) translate(80, 95)"
+              stroke-width="2"
+              stroke=""
+              fill="#ffe4a1"
+              points="5,0 5,5 0,5 0,0"
+              id="particles"
+            ></polygon>
+            <polygon
+              transform="rotate(45 100 100) translate(80, 55)"
+              stroke-width="2"
+              stroke=""
+              fill="#ccb069"
+              points="6,0 6,6 0,6 0,0"
+              id="particles"
+            ></polygon>
+            <polygon
+              transform="rotate(45 100 100) translate(70, 80)"
+              stroke-width="2"
+              stroke=""
+              fill="#fff"
+              points="2,0 2,2 0,2 0,0"
+              id="particles"
+            ></polygon>
+            <polygon
+              stroke-width="2"
+              stroke=""
+              fill="#292d34"
+              points="29.5,99.8 100,142 100,172 29.5,130"
+            ></polygon>
+            <polygon
+              transform="translate(50, 92)"
+              stroke-width="2"
+              stroke=""
+              fill="#1f2127"
+              points="50,50 120.5,8 120.5,35 50,80"
+            ></polygon>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div id="unity-container" class="unity-desktop" hidden>
+      <canvas id="unity-canvas"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+        <div id="loading-text">LOADING...</div>
+      </div>
+    </div>
+
+    <script>
+  // Stub global gameInstance so early SendMessage calls don't crash
+  window.gameInstance =
+    window.gameInstance ||
+    {
+      SendMessage: function (obj, method, value) {
+        console.log(
+          "[stub] gameInstance.SendMessage before init:",
+          obj,
+          method,
+          value
+        );
+      },
     };
-	GameInit.load(options);	  
+  var gameInstance = window.gameInstance;
+
+  var container = document.querySelector("#unity-container");
+  var canvas = document.querySelector("#unity-canvas");
+  var loadingBar = document.querySelector("#unity-loading-bar");
+  var progressBarFull = document.querySelector("#unity-progress-bar-full");
+  var loadingText = document.querySelector("#loading-text");
+
+  function unityShowBanner(msg, type) {
+    console.log("[unityShowBanner]", type, msg);
+  }
+
+  let doneparts = 0;
+  let maxparts = 0;
+
+  function mergeFiles(fileParts) {
+    return Promise.all(
+      fileParts.map((part) =>
+        fetch(part)
+          .then((res) => res.arrayBuffer())
+          .then((buf) => {
+            doneparts++;
+            if (loadingText) {
+              loadingText.textContent = `LOADING... (${doneparts}/${maxparts})`;
+            }
+            return buf;
+          })
+      )
+    ).then((buffers) => {
+      const mergedBlob = new Blob(buffers);
+      return URL.createObjectURL(mergedBlob);
+    });
+  }
+
+  // Build/HT2_web.data.part000 → part005
+  function getParts(fileBase, start, end, padLen = 3) {
+    const parts = [];
+    for (let i = start; i <= end; i++) {
+      const index = String(i).padStart(padLen, "0");
+      parts.push(`${fileBase}.part${index}`);
+    }
+    maxparts += parts.length;
+    return parts;
+  }
+
+  // 🔥 Only merge the DATA file, leave wasm as a single file
+  // We have part000..part005 → 0..5
+  mergeFiles(getParts("Build/HT2_web.data", 0, 5))
+    .then((dataUrl) => {
+      container.hidden = false;
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/HT2_web.loader.js";
+
+      var config = {
+        dataUrl: dataUrl, // merged data blob URL
+        frameworkUrl: buildUrl + "/HT2_web.framework.js.unityweb",
+        codeUrl: buildUrl + "/HT2_web.wasm.unityweb", // normal wasm file
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Horror Tale",
+        productName: "Horror Tale",
+        productVersion: "1.0",
+        showBanner: unityShowBanner,
+      };
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content =
+          "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+        document.getElementsByTagName("head")[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+      } else {
+        function resizeCanvas() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          canvas.style.width = window.innerWidth + "px";
+          canvas.style.height = window.innerHeight + "px";
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+      }
+
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        })
+          .then((instance) => {
+            Object.assign(gameInstance, instance);
+            loadingBar.style.display = "none";
+            if (loadingText) loadingText.remove();
+          })
+          .catch((message) => {
+            console.error(message);
+          });
+      };
+      document.body.appendChild(script);
+    })
+    .catch((e) => {
+      console.error("Error merging data parts:", e);
+    });
 </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"2cf565c5b1dc45228d3a7cc18aab5fac","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
+
+
+    <script>
+      // Intro fade-out
+      window.addEventListener("load", () => {
+        const intro = document.getElementById("intro-screen");
+        if (!intro) return;
+        setTimeout(() => {
+          intro.classList.add("hidden-intro");
+          setTimeout(() => intro.remove(), 800);
+        }, 2500);
+      });
+    </script>
+  </body>
 </html>
