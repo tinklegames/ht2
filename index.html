@@ -548,7 +548,38 @@
         <div id="loading-text">LOADING...</div>
       </div>
     </div>
-    <script>
+  <script>
+/*
+  FULL CRAZYGAMES SDK STUB
+  Forces the game to think it's running on:
+  https://tinklegames.github.io/ht3
+*/
+
+window.CrazyGames = window.CrazyGames || {
+  host: "https://tinklegames.github.io/ht3",
+  SDK: {
+    init: async function () {
+      console.log("Fake CrazyGames SDK initialized on tinklegames.github.io/ht3");
+      return true;
+    },
+    ad: {
+      hasAdblock: async () => false
+    },
+    game: {
+      happytime: () => console.log("happytime() stub"),
+      hideInviteButton: () => console.log("hideInviteButton() stub")
+    },
+    user: {
+      getUser: async () => ({ id: "guest", name: "Guest" }),
+      getUserToken: async () => "fake-token-123",
+      getXsollaUserToken: async () => "fake-xsolla-token-456",
+      isUserAccountAvailable: false,
+      addAuthListener: () => {}
+    }
+  }
+};
+</script>
+<script>
   // Stub global gameInstance so early SendMessage calls don't crash
   window.gameInstance =
     window.gameInstance ||
@@ -596,7 +627,6 @@
     });
   }
 
-  // Build/HT2_web.data.part000 → part005
   function getParts(fileBase, start, end, padLen = 3) {
     const parts = [];
     for (let i = start; i <= end; i++) {
@@ -607,8 +637,6 @@
     return parts;
   }
 
-  // 🔥 Only merge the DATA file, leave wasm as a single file
-  // We have part000..part005 → 0..5
   mergeFiles(getParts("Build/HT2_web.data", 0, 5))
     .then((dataUrl) => {
       container.hidden = false;
@@ -617,9 +645,9 @@
       var loaderUrl = buildUrl + "/HT2_web.loader.js";
 
       var config = {
-        dataUrl: dataUrl, // merged data blob URL
+        dataUrl: dataUrl,
         frameworkUrl: buildUrl + "/HT2_web.framework.js.unityweb",
-        codeUrl: buildUrl + "/HT2_web.wasm.unityweb", // normal wasm file
+        codeUrl: buildUrl + "/HT2_web.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Horror Tale",
         productName: "Horror Tale",
@@ -651,6 +679,22 @@
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
+        // 🔥 Make sure OUR _InitSDK wins, after framework.js loads
+        window._InitSDK = function (version) {
+          console.log(
+            "%c[SDK INIT OVERRIDE] Using tinklegames.github.io/ht2 as host",
+            "color: #00ff99; font-weight: bold;"
+          );
+
+          if (typeof SendMessage !== "undefined") {
+            try {
+              SendMessage("CrazySDKSingleton", "JSLibCallback_Init");
+            } catch (e) {
+              console.warn("Unity SendMessage not ready yet, continuing", e);
+            }
+          }
+        };
+
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         })
@@ -669,52 +713,7 @@
       console.error("Error merging data parts:", e);
     });
 </script>
-<script>
-/*
-  FULL CRAZYGAMES SDK STUB
-  Forces the game to think it's running on:
-  https://tinklegames.github.io/ht2
-*/
 
-window.CrazyGames = {
-  host: "https://tinklegames.github.io/ht2",
-  SDK: {
-    init: async function () {
-      console.log("Fake CrazyGames SDK initialized on tinklegames.github.io/ht3");
-      return true;
-    },
-    ad: {
-      hasAdblock: async () => false
-    },
-    game: {
-      happytime: () => console.log("happytime() stub"),
-      hideInviteButton: () => console.log("hideInviteButton() stub")
-    },
-    user: {
-      getUser: async () => ({ id: "guest", name: "Guest" }),
-      getUserToken: async () => "fake-token-123",
-      getXsollaUserToken: async () => "fake-xsolla-token-456",
-      isUserAccountAvailable: false,
-      addAuthListener: () => {}
-    }
-  }
-};
-
-// Override the original Unity JS hook
-window._InitSDK = function (version) {
-  console.log("%c[SDK INIT OVERRIDE] Using tinklegames.github.io/ht2 as host",
-              "color: #00ff99; font-weight: bold;");
-  
-  // Trigger the Unity callback so the game continues
-  if (typeof SendMessage !== "undefined") {
-    try {
-      SendMessage("CrazySDKSingleton", "JSLibCallback_Init");
-    } catch (e) {
-      console.warn("Unity SendMessage not ready yet, continuing");
-    }
-  }
-};
-</script>
 
     <script>
       // Intro fade-out
