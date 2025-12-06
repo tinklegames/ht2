@@ -549,6 +549,45 @@
       </div>
     </div>
   <script>
+(function () {
+
+  const blockedPattern = /\/lib\/site-lock\//i;
+
+  /* ------------- FETCH OVERRIDE ------------- */
+  const origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    if (blockedPattern.test(url)) {
+      console.warn("[BLOCKED] fetch attempted:", url);
+
+      // Return a fake OK response so Unity thinks it succeeded
+      return Promise.resolve(
+        new Response("{}", {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        })
+      );
+    }
+    return origFetch(url, opts);
+  };
+
+  /* ------------- XHR OVERRIDE ------------- */
+  const origOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    if (blockedPattern.test(url)) {
+      console.warn("[BLOCKED] XHR attempted:", url);
+
+      // Create an empty fake response so Unity doesn't freeze
+      this._blocked = true;
+      return origOpen.call(this, method, "data:application/json,{}");
+    }
+
+    return origOpen.apply(this, arguments);
+  };
+
+})();
+</script>
+
+  <script>
 /*
   FULL CRAZYGAMES SDK STUB
   Forces the game to think it's running on:
