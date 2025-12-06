@@ -548,11 +548,6 @@
         <div id="loading-text">LOADING...</div>
       </div>
     </div>
-<script>
-  window._InitSDK = function(version) {
-    console.log("CrazyGames SDK disabled");
-  };
-</script>
     <script>
   // Stub global gameInstance so early SendMessage calls don't crash
   window.gameInstance =
@@ -674,7 +669,52 @@
       console.error("Error merging data parts:", e);
     });
 </script>
+<script>
+/*
+  FULL CRAZYGAMES SDK STUB
+  Forces the game to think it's running on:
+  https://tinklegames.github.io/ht3
+*/
 
+window.CrazyGames = {
+  host: "https://tinklegames.github.io/ht3",
+  SDK: {
+    init: async function () {
+      console.log("Fake CrazyGames SDK initialized on tinklegames.github.io/ht3");
+      return true;
+    },
+    ad: {
+      hasAdblock: async () => false
+    },
+    game: {
+      happytime: () => console.log("happytime() stub"),
+      hideInviteButton: () => console.log("hideInviteButton() stub")
+    },
+    user: {
+      getUser: async () => ({ id: "guest", name: "Guest" }),
+      getUserToken: async () => "fake-token-123",
+      getXsollaUserToken: async () => "fake-xsolla-token-456",
+      isUserAccountAvailable: false,
+      addAuthListener: () => {}
+    }
+  }
+};
+
+// Override the original Unity JS hook
+window._InitSDK = function (version) {
+  console.log("%c[SDK INIT OVERRIDE] Using tinklegames.github.io/ht3 as host",
+              "color: #00ff99; font-weight: bold;");
+  
+  // Trigger the Unity callback so the game continues
+  if (typeof SendMessage !== "undefined") {
+    try {
+      SendMessage("CrazySDKSingleton", "JSLibCallback_Init");
+    } catch (e) {
+      console.warn("Unity SendMessage not ready yet, continuing");
+    }
+  }
+};
+</script>
 
     <script>
       // Intro fade-out
