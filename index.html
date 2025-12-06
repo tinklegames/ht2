@@ -548,7 +548,11 @@
         <div id="loading-text">LOADING...</div>
       </div>
     </div>
-
+<script>
+  window._InitSDK = function(version) {
+    console.log("CrazyGames SDK disabled");
+  };
+</script>
     <script>
   // Stub global gameInstance so early SendMessage calls don't crash
   window.gameInstance =
