@@ -673,11 +673,11 @@
 /*
   FULL CRAZYGAMES SDK STUB
   Forces the game to think it's running on:
-  https://tinklegames.github.io/ht3
+  https://tinklegames.github.io/ht2
 */
 
 window.CrazyGames = {
-  host: "https://tinklegames.github.io/ht3",
+  host: "https://tinklegames.github.io/ht2",
   SDK: {
     init: async function () {
       console.log("Fake CrazyGames SDK initialized on tinklegames.github.io/ht3");
@@ -702,7 +702,7 @@ window.CrazyGames = {
 
 // Override the original Unity JS hook
 window._InitSDK = function (version) {
-  console.log("%c[SDK INIT OVERRIDE] Using tinklegames.github.io/ht3 as host",
+  console.log("%c[SDK INIT OVERRIDE] Using tinklegames.github.io/ht2 as host",
               "color: #00ff99; font-weight: bold;");
   
   // Trigger the Unity callback so the game continues
