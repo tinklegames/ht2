@@ -548,6 +548,110 @@
         <div id="loading-text">LOADING...</div>
       </div>
     </div>
+    <script>
+(function () {
+  /* ============================
+     1) BLOCK /lib/site-lock/ CALLS
+     ============================ */
+  const blockedPattern = /\/lib\/site-lock\//i;
+
+  // --- fetch override ---
+  const origFetch = window.fetch;
+  if (origFetch) {
+    window.fetch = function (input, init) {
+      const url = typeof input === "string" ? input : (input && input.url) || "";
+      if (blockedPattern.test(url)) {
+        console.warn("[BLOCKED] fetch to site-lock:", url);
+        // Fake OK response so game thinks it worked
+        return Promise.resolve(
+          new Response("{}", {
+            status: 200,
+            headers: { "Content-Type": "application/json" }
+          })
+        );
+      }
+      return origFetch(input, init);
+    };
+  }
+
+  // --- XHR override ---
+  const origXHROpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function (method, url) {
+    if (typeof url === "string" && blockedPattern.test(url)) {
+      console.warn("[BLOCKED] XHR to site-lock:", url);
+      // Redirect to harmless empty JSON so callbacks still fire
+      return origXHROpen.call(this, "GET", "data:application/json,{}");
+    }
+    return origXHROpen.apply(this, arguments);
+  };
+
+  /* ===================================
+     2) NUKE THE "Play on Igru.net" OVERLAY
+     =================================== */
+
+  function removeIgruOverlay(root) {
+    if (!root || !root.querySelectorAll) return;
+
+    // Find any <a href="...igru.net...">
+    const links = root.querySelectorAll('a[href*="igru.net"]');
+    links.forEach((a) => {
+      // Look for the full-screen fixed div that contains it
+      const overlayDiv = a.closest("div");
+      if (!overlayDiv) return;
+
+      const style = overlayDiv.style || {};
+      const isFullScreenOverlay =
+        style.position === "fixed" &&
+        style.top === "0px" &&
+        style.left === "0px" &&
+        style.width === "100%" &&
+        style.height === "100%";
+
+      if (isFullScreenOverlay) {
+        console.warn("[REMOVED] Igru.net overlay div");
+        overlayDiv.remove();
+      }
+    });
+  }
+
+  // Run once right away (in case it's already in DOM)
+  removeIgruOverlay(document);
+
+  // Also run after DOMContentLoaded for safety
+  document.addEventListener("DOMContentLoaded", function () {
+    removeIgruOverlay(document);
+  });
+
+  // Keep watching the DOM for anything new that matches
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === 1) {
+          removeIgruOverlay(node);
+        }
+      }
+    }
+  });
+
+  observer.observe(document.documentElement || document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  /* ===================================
+     3) CSS fallback (just in case)
+     =================================== */
+  const style = document.createElement("style");
+  style.textContent = `
+    a[href*="igru.net"] {
+      display: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+})();
+</script>
+
   <script>
 (function () {
 
